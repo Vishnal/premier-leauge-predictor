@@ -1,4 +1,6 @@
 import { useEffect } from "react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "../firebase";
 import {
   Outlet,
   Link,
@@ -8,6 +10,7 @@ import {
   NavLink,
   useNavigation,
   useSubmit,
+  useNavigate,
 } from "react-router-dom";
 const getContacts = () => [];
 const createContact = () => {};
@@ -27,7 +30,37 @@ export async function loader({ request }) {
 export const Root = () => {
   const { contacts, q } = useLoaderData();
   const navigation = useNavigation();
+  const navigate = useNavigate();
   const submit = useSubmit();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        const uid = user.uid;
+        // ...
+        console.log("uid", uid);
+      } else {
+        // User is signed out
+        // ...
+        console.log("user is logged out");
+      }
+    });
+  }, []);
+
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        // Sign-out successful.
+        navigate("/");
+        console.log("Signed out successfully");
+      })
+      .catch((error) => {
+        // An error happened.
+        throw error;
+      });
+  };
 
   const searching =
     navigation.location &&
@@ -94,6 +127,7 @@ export const Root = () => {
             </p>
           )}
         </nav>
+        <button onClick={handleLogout}>Logout</button>
       </div>
       <div
         id="detail"

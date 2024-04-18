@@ -9,6 +9,8 @@ import {
 } from "./routes/root";
 import { ErrorPage } from "./error-page";
 import Index from "./routes/index";
+import SignUp from "./routes/sign-up";
+import Login from "./routes/login";
 
 const router = createBrowserRouter([
   {
@@ -20,7 +22,11 @@ const router = createBrowserRouter([
     children: [
       {
         errorElement: <ErrorPage />,
-        children: [{ index: true, element: <Index /> }],
+        children: [
+          { index: true, element: <Index /> },
+          { path: "signup", element: <SignUp /> },
+          { path: "login", element: <Login /> },
+        ],
       },
     ],
   },
